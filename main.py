@@ -5,62 +5,71 @@ import logging
 from dotenv import load_dotenv
 import os
 
+# Load token
 load_dotenv()
 token = os.getenv('DISCORD_TOKEN')
 
+# Logging
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+
+# Intents
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 intents.dm_messages = True
-intents.polls = True
 intents.bans = True
 intents.reactions = True
 intents.dm_reactions = True
 
+# Bot setup
 bot = commands.Bot(command_prefix="slay", intents=intents)
 
+# Event: Bot ready
 @bot.event
 async def on_ready():
     print(f"{bot.user} is online!")
-    
+
     await bot.change_presence(
         status=Status.dnd,
         activity=Activity(type=ActivityType.watching, name="Men | type slayhelp")
     )
 
+# Event: Member joins
 @bot.event
 async def on_member_join(member):
     await member.send(f"Welcome!! Please leave. {member.name}")
 
+# Event: Message filtering
 @bot.event
 async def on_message(message):
-    msg_content = message.content.lower()
     if message.author == bot.user:
         return
+
+    msg_content = message.content.lower()
 
     if "league of legends" in msg_content:
         await message.delete()
         await message.channel.send(f"{message.author.mention} Don't ever say that again.")
-    elif "ranked" in msg_content:
+
+    if "ranked" in msg_content:
         await message.delete()
         await message.channel.send(f"{message.author.mention} What the hell is wrong with you.")
-    elif "akame ga kill" in msg_content:  # lowercase comparison
+
+    if "akame ga kill" in msg_content:
         await message.channel.send("OMGGGG I LOVE AKAME")
 
-        await bot.process_commands(message)
+    # Always process commands at the end
+    await bot.process_commands(message)
 
-
+# Commands
 @bot.command()
 async def hello(ctx):
     await ctx.send(f"Fakka niffo {ctx.author.mention}")
 
-# change dm so that it sends a golem image to dm
 @bot.command()
 async def dm(ctx, *, msg):
     await ctx.author.send(f"You said {msg}")
 
-# change to a funny thing that starts after a minute
 @bot.command()
 async def pekka(ctx):
     await ctx.reply("You shouldn't have done that.")
@@ -72,11 +81,10 @@ async def poll(ctx, *, question):
     await poll_message.add_reaction("👍")
     await poll_message.add_reaction("👎")
 
-@bot.command()    
+@bot.command()
 async def sneaky(ctx):
     gif_url = "https://tenor.com/view/sneaky-golem-clash-royale-gif-18197200758540436087"
     await ctx.send(gif_url)
 
-
-
+# Run bot
 bot.run(token, log_handler=handler, log_level=logging.DEBUG)
