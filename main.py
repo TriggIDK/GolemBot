@@ -41,10 +41,10 @@ async def on_message(message):
     if "league of legends" in message.content.lower():
         await message.delete()
         await message.channel.send(f"{message.author.mention} Don't ever say that again.")
-    elif "ranked":
+    elif "ranked" in message.content.lower():
          await message.delete()
          await message.channel.send(f"{message.author.mention} What the hell is wrong with you.")
-    elif "Akame ga kill":
+    elif "Akame ga kill" in message.content.lower():
          await message.channel.send("OMGGGG I LOVE AKAME")
 
     await bot.process_commands(message)
