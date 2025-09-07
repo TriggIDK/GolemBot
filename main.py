@@ -17,7 +17,7 @@ intents.bans = True
 intents.reactions = True
 intents.dm_reactions = True
 
-bot = commands.Bot(command_prefix='slay', intents=intents)
+bot = commands.Bot(command_prefix="slay", intents=intents)
 
 @bot.event
 async def on_ready():
@@ -38,5 +38,29 @@ async def on_message(message):
     
     await bot.process_commands(message)
 
+@bot.command()
+async def hello(ctx):
+    description = "Says what's up"
+    await ctx.send(f"Fakka niffo {ctx.author.mention}")
+
+# change dm so that it sends a golem image to dm
+@bot.command()
+async def dm(ctx, *, msg):
+    description = "Sends a golem into your Dms"
+    await ctx.author.send(f"You said {msg}")
+
+# change to a funny thing that starts after a minute
+bot.command()
+async def pekka(ctx):
+    description = "Golem does not like Pekka"
+    await ctx.reply("You shouldn't have done that.")
+
+@bot.command()
+async def poll(ctx, *, question):
+    description = "Starts a poll"
+    embed = discord.Embed(title="New Poll", description=question)
+    poll_message = await ctx.send(embed=embed)
+    await poll_message.add_reaction("👍")
+    await poll_message.add_reaction("👎")
 
 bot.run(token, log_handler=handler, log_level=logging.DEBUG)
