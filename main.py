@@ -26,12 +26,12 @@ async def on_ready():
     
     await bot.change_presence(
         status=Status.dnd,
-        activity=Activity(type=ActivityType.watching, name="Men")
+        activity=Activity(type=ActivityType.watching, name="Men | type slayhelp")
     )
 
 @bot.event
 async def on_member_join(member):
-    await member.send(f"The the golem has been waiting for you {member.name}")
+    await member.send(f"Welcome!! Please leave. {member.name}")
 
 @bot.event
 async def on_message(message):
