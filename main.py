@@ -64,4 +64,8 @@ async def sneaky(ctx):
     gif_url = "https://tenor.com/view/sneaky-golem-clash-royale-gif-18197200758540436087"
     await ctx.send(gif_url)
 
+@bot.command()
+async def akame(ctx):
+    await ctx.reply("OMGGGG I LOVE AKAME")
+
 bot.run(token, log_handler=handler, log_level=logging.DEBUG)
