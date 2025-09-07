@@ -23,4 +23,20 @@ bot = commands.Bot(command_prefix='slay', intents=intents)
 async def on_ready():
     print(f"We are ready to go in {bot.user.name}")
 
+@bot.event
+async def on_member_join(member):
+    await member.send(f"The the golem has been waiting for you {member.name}")
+
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return
+
+    if "league of legends" in message.content.lower():
+        await message.delete()
+        await message.channel.send(f"{message.author.mention} Don't ever say that again.")
+    
+    await bot.process_commands(message)
+
+
 bot.run(token, log_handler=handler, log_level=logging.DEBUG)
