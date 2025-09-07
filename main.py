@@ -44,6 +44,8 @@ async def on_message(message):
     elif "ranked":
          await message.delete()
          await message.channel.send(f"{message.author.mention} What the hell is wrong with you.")
+    elif "Akame ga kill":
+         await message.channel.send("OMGGGG I LOVE AKAME")
 
     await bot.process_commands(message)
 
@@ -73,10 +75,6 @@ async def poll(ctx, *, question):
 async def sneaky(ctx):
     gif_url = "https://tenor.com/view/sneaky-golem-clash-royale-gif-18197200758540436087"
     await ctx.send(gif_url)
-
-@bot.command()
-async def akame(ctx):
-    await ctx.reply("OMGGGG I LOVE AKAME")
 
 
 
