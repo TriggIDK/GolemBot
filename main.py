@@ -26,7 +26,7 @@ async def on_ready():
     
     await bot.change_presence(
         status=Status.dnd,
-        activity=Activity(type=ActivityType.playing, name="My nails slayyy.")
+        activity=Activity(type=ActivityType.watching, name="Men")
     )
 
 @bot.event
