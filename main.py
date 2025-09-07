@@ -28,13 +28,24 @@ async def on_member_join(member):
     await member.send(f"The the golem has been waiting for you {member.name}")
 
 @bot.event
-async def on_message(message):
+async def on_messageleague(message):
     if message.author == bot.user:
         return
 
     if "league of legends" in message.content.lower():
         await message.delete()
         await message.channel.send(f"{message.author.mention} Don't ever say that again.")
+    
+    await bot.process_commands(message)
+
+@bot.event
+async def on_messageranked(message):
+    if message.author == bot.user:
+        return
+
+    if "ranked" in message.content.lower():
+        await message.delete()
+        await message.channel.send(f"{message.author.mention} What the hell is wrong with you bro.")
     
     await bot.process_commands(message)
 
@@ -67,5 +78,7 @@ async def sneaky(ctx):
 @bot.command()
 async def akame(ctx):
     await ctx.reply("OMGGGG I LOVE AKAME")
+
+
 
 bot.run(token, log_handler=handler, log_level=logging.DEBUG)
