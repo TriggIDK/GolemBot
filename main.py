@@ -59,4 +59,9 @@ async def poll(ctx, *, question):
     await poll_message.add_reaction("👍")
     await poll_message.add_reaction("👎")
 
+@bot.command()    
+async def sneaky(ctx):
+    gif_url = "https://tenor.com/view/sneaky-golem-clash-royale-gif-18197200758540436087"
+    await ctx.send(gif_url)
+
 bot.run(token, log_handler=handler, log_level=logging.DEBUG)
