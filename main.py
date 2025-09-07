@@ -48,7 +48,7 @@ async def dm(ctx, *, msg):
     await ctx.author.send(f"You said {msg}")
 
 # change to a funny thing that starts after a minute
-bot.command()
+@bot.command()
 async def pekka(ctx):
     await ctx.reply("You shouldn't have done that.")
 
