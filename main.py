@@ -35,19 +35,20 @@ async def on_member_join(member):
 
 @bot.event
 async def on_message(message):
+    msg_content = message.content.lower()
     if message.author == bot.user:
         return
 
-    if "league of legends" in message.content.lower():
+    if "league of legends" in msg_content:
         await message.delete()
         await message.channel.send(f"{message.author.mention} Don't ever say that again.")
-    elif "ranked" in message.content.lower():
-         await message.delete()
-         await message.channel.send(f"{message.author.mention} What the hell is wrong with you.")
-    elif "Akame ga kill" in message.content.lower():
-         await message.channel.send("OMGGGG I LOVE AKAME")
+    elif "ranked" in msg_content:
+        await message.delete()
+        await message.channel.send(f"{message.author.mention} What the hell is wrong with you.")
+    elif "akame ga kill" in msg_content:  # lowercase comparison
+        await message.channel.send("OMGGGG I LOVE AKAME")
 
-    await bot.process_commands(message)
+        await bot.process_commands(message)
 
 
 @bot.command()
