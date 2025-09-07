@@ -1,4 +1,5 @@
 import discord
+from discord import Status, Activity, ActivityType
 from discord.ext import commands
 import logging
 from dotenv import load_dotenv
@@ -21,7 +22,12 @@ bot = commands.Bot(command_prefix="slay", intents=intents)
 
 @bot.event
 async def on_ready():
-    print(f"We are ready to go in {bot.user.name}")
+    print(f"{bot.user} is online!")
+    
+    await bot.change_presence(
+        status=Status.dnd,
+        activity=Activity(type=ActivityType.playing, name="My nails slayyy.")
+    )
 
 @bot.event
 async def on_member_join(member):
