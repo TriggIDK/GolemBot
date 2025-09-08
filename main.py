@@ -137,7 +137,10 @@ async def meghan(ctx):
     await ctx.send(gif_url)
 
 # Print to console for your own debugging
+@bot.command()
+async def dev(ctx):
     print("TENOR API KEY LOADED:", bool(TENOR_API_KEY))
     print("DISCORD API KEY LOADED:", bool(DISCORD_TOKEN))
+
 # Run bot
 bot.run(DISCORD_TOKEN, log_handler=handler, log_level=logging.DEBUG)
