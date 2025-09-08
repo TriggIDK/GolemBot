@@ -26,8 +26,10 @@ intents.dm_reactions = True
 
 # Bot setup
 bot = commands.Bot(command_prefix="slay", intents=intents)
-#stores the ignored channels
+
+# Stores ignored channels + welcome channels
 ignored_channels = set()
+welcome_channels = {}
 
 # Event: Bot ready
 @bot.event
@@ -39,6 +41,7 @@ async def on_ready():
         activity=Activity(type=ActivityType.watching, name="Tiktoks of baddies | type slayhelp")
     )
 
+# Event: Member join
 @bot.event
 async def on_member_join(member):
     guild = member.guild
@@ -47,7 +50,6 @@ async def on_member_join(member):
         if channel:
             await channel.send(f"Welcome!! Please leave. {member.mention}")
     else:
-        # Fallback: DM if no welcome channel set
         await member.send(f"Welcome!! Please leave. {member.name}")
 
 # Event: Message filtering
@@ -71,29 +73,27 @@ async def on_message(message):
     if "akame ga kill" in msg_content:
         await message.channel.send("OMGGGG I LOVE AKAME")
 
-    # Always process commands at the end
     await bot.process_commands(message)
 
 # Commands
-welcome_channels = {}
 @bot.command()
 @commands.has_permissions(manage_guild=True)
 async def setwelcome(ctx, channel: discord.TextChannel):
     """Set the channel for welcome messages."""
     welcome_channels[ctx.guild.id] = channel.id
-    await ctx.send(f"Unwelcome messages will now be sent in {channel.mention}")
+    await ctx.send(f"Welcome messages will now be sent in {channel.mention}")
 
 @bot.command()
 async def ignore(ctx, channel: discord.TextChannel):
-    """Tell the bot to ignore an irrelevant channel."""
+    """Tell the bot to ignore a channel."""
     ignored_channels.add(channel.id)
-    await ctx.send(f"{channel.mention} is now irrelevant")
+    await ctx.send(f"{channel.mention} is now ignored")
 
 @bot.command()
 async def unignore(ctx, channel: discord.TextChannel):
-    """Tell the bot to no longer ignore a relevant channel."""
+    """Tell the bot to stop ignoring a channel."""
     ignored_channels.discard(channel.id)
-    await ctx.send(f" {channel.mention} is now irrelevant")
+    await ctx.send(f"{channel.mention} is no longer ignored")
 
 @bot.command()
 async def hello(ctx):
@@ -110,7 +110,7 @@ async def brb(ctx):
 @bot.command()
 async def gif(ctx, *, search: str = "kitten"):
     """Send a random GIF from Tenor based on user keyword (default = kitten)."""
-    url = f"https://tenor.googleapis.com/v2/search?q={search}&key={TENOR_API_KEY}&limit=20"
+    url = f"https://tenor.googleapis.com/v2/search?q={search}&key={TENOR_API_KEY}&client_key=discordbot&limit=20"
     response = requests.get(url)
 
     if response.status_code == 200:
@@ -122,7 +122,7 @@ async def gif(ctx, *, search: str = "kitten"):
         else:
             await ctx.send(f"I am blind and couldn't find any gifs for: **{search}**.")
     else:
-        await ctx.send("Sorry I am slow, There was an error in fetchin gifs")
+        await ctx.send(f"Sorry I am slow. HTTP {response.status_code}: {response.text}")
 
 @bot.command()
 async def poll(ctx, *, question):
