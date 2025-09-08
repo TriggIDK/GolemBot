@@ -23,6 +23,8 @@ intents.dm_reactions = True
 
 # Bot setup
 bot = commands.Bot(command_prefix="slay", intents=intents)
+#stores the ignored channels
+ignored_channels = set()
 
 # Event: Bot ready
 @bot.event
@@ -63,6 +65,18 @@ async def on_message(message):
 
 # Commands
 @bot.command()
+async def ignore(ctx, channel: discord.TextChannel):
+    """Tell the bot to ignore an irrelevant channel."""
+    ignored_channels.add(channel.id)
+    await ctx.send(f"{channel.mention} is now irrelevant")
+
+@bot.command()
+async def unignore(ctx, channel: discord.TextChannel):
+    """Tell the bot to no longer ignore a relevant channel."""
+    ignored_channels.discard(channel.id)
+    await ctx.send(f" {channel.mention} is now irrelevant")
+
+@bot.command()
 async def hello(ctx):
     await ctx.send(f"Fakka niffo {ctx.author.mention}")
 
@@ -71,7 +85,7 @@ async def dm(ctx, *, msg):
     await ctx.author.send(f"You said {msg}")
 
 @bot.command()
-async def pekka(ctx):
+async def brb(ctx):
     await ctx.reply("You shouldn't have done that.")
 
 @bot.command()
