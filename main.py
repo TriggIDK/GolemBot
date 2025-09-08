@@ -25,7 +25,7 @@ intents.reactions = True
 intents.dm_reactions = True
 
 # Bot setup
-bot = commands.Bot(command_prefix="slay", intents=intents)
+bot = commands.Bot(command_prefix="slay", intents=intents, help_command=None)
 
 # Stores ignored channels + welcome channels
 ignored_channels = set()
@@ -76,6 +76,28 @@ async def on_message(message):
     await bot.process_commands(message)
 
 # Commands
+
+# Custom Help Command
+@bot.command(name="help")
+async def custom_help(ctx):
+    """Show this message."""
+    embed = discord.Embed(
+        title="⚔️ SlayBot Help",
+        description="Here are all the available commands:\n\n",
+        color=discord.Color.gold()
+    )
+
+    for command in bot.commands:
+        if not command.hidden:
+            embed.add_field(
+                name=f"slay{command.name}",
+                value=command.help or "No description provided.",
+                inline=False
+            )
+
+    embed.set_footer(text="Use slay<command> to run a command!")
+    await ctx.send(embed=embed)
+
 @bot.command()
 @commands.has_permissions(manage_guild=True)
 async def setwelcome(ctx, channel: discord.TextChannel):
@@ -97,15 +119,8 @@ async def unignore(ctx, channel: discord.TextChannel):
 
 @bot.command()
 async def hello(ctx):
+    """Say whatsup"""
     await ctx.send(f"Fakka niffo {ctx.author.mention}")
-
-@bot.command()
-async def dm(ctx, *, msg):
-    await ctx.author.send(f"You said {msg}")
-
-@bot.command()
-async def brb(ctx):
-    await ctx.reply("You shouldn't have done that.")
 
 @bot.command()
 async def gif(ctx, *, search: str = "kitten"):
@@ -126,6 +141,7 @@ async def gif(ctx, *, search: str = "kitten"):
 
 @bot.command()
 async def poll(ctx, *, question):
+    """Start a poll"""
     embed = discord.Embed(title="New Poll", description=question)
     poll_message = await ctx.send(embed=embed)
     await poll_message.add_reaction("👍")
@@ -133,11 +149,13 @@ async def poll(ctx, *, question):
 
 @bot.command()
 async def meghan(ctx):
+    """Don't use this."""
     gif_url = "https://tenor.com/view/sneaky-golem-clash-royale-gif-18197200758540436087"
     await ctx.send(gif_url)
 
 @bot.command()
 async def dev(ctx):
+    """Dev only command"""
     # Print to console for your own debugging
     print("TENOR API KEY LOADED:", bool(TENOR_API_KEY))
     print("DISCORD TOKEN LOADED:", bool(DISCORD_TOKEN))
