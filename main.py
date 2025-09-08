@@ -81,7 +81,7 @@ welcome_channels = {}
 async def setwelcome(ctx, channel: discord.TextChannel):
     """Set the channel for welcome messages."""
     welcome_channels[ctx.guild.id] = channel.id
-    await ctx.send(f"✅ Welcome messages will now be sent in {channel.mention}")
+    await ctx.send(f"Unwelcome messages will now be sent in {channel.mention}")
 
 @bot.command()
 async def ignore(ctx, channel: discord.TextChannel):
