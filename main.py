@@ -46,6 +46,8 @@ async def on_member_join(member):
 async def on_message(message):
     if message.author == bot.user:
         return
+    elif message.channel.id in ignored_channels:
+        return
 
     msg_content = message.content.lower()
 
