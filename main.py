@@ -39,10 +39,16 @@ async def on_ready():
         activity=Activity(type=ActivityType.watching, name="Tiktoks of baddies | type slayhelp")
     )
 
-# Event: Member joins
 @bot.event
 async def on_member_join(member):
-    await member.send(f"Welcome!! Please leave. {member.name}")
+    guild = member.guild
+    if guild.id in welcome_channels:
+        channel = bot.get_channel(welcome_channels[guild.id])
+        if channel:
+            await channel.send(f"Welcome!! Please leave. {member.mention}")
+    else:
+        # Fallback: DM if no welcome channel set
+        await member.send(f"Welcome!! Please leave. {member.name}")
 
 # Event: Message filtering
 @bot.event
@@ -69,6 +75,14 @@ async def on_message(message):
     await bot.process_commands(message)
 
 # Commands
+welcome_channels = {}
+@bot.command()
+@commands.has_permissions(manage_guild=True)
+async def setwelcome(ctx, channel: discord.TextChannel):
+    """Set the channel for welcome messages."""
+    welcome_channels[ctx.guild.id] = channel.id
+    await ctx.send(f"✅ Welcome messages will now be sent in {channel.mention}")
+
 @bot.command()
 async def ignore(ctx, channel: discord.TextChannel):
     """Tell the bot to ignore an irrelevant channel."""
