@@ -136,17 +136,8 @@ async def meghan(ctx):
     gif_url = "https://tenor.com/view/sneaky-golem-clash-royale-gif-18197200758540436087"
     await ctx.send(gif_url)
 
-@bot.command()
-async def dev(ctx):
-    # Print to console for your own debugging
+# Print to console for your own debugging
     print("TENOR API KEY LOADED:", bool(TENOR_API_KEY))
-
-    # Send a simple confirmation in Discord
-    if TENOR_API_KEY:
-        await ctx.send("✅ Tenor API key is loaded.")
-    else:
-        await ctx.send("❌ No Tenor API key loaded.")
-
-
+    print("DISCORD API KEY LOADED:", bool(DISCORD_TOKEN))
 # Run bot
 bot.run(DISCORD_TOKEN, log_handler=handler, log_level=logging.DEBUG)
