@@ -85,6 +85,9 @@ async def on_ready():
         status=Status.dnd,
         activity=Activity(type=ActivityType.watching, name="Tiktoks of baddies | type slayhelp")
     )
+    
+    if not daily_check.is_running():
+        daily_check.start()
 
 # Event: Member join
 @bot.event
@@ -248,9 +251,6 @@ async def days(ctx, toggle: str):
         await ctx.send("Daily notifications **disabled**")
     else:
         await ctx.send("Please use `slaydays on` or `slaydays off`")
-
-# Start the daily check loop
-daily_check.start()
 
 # Run bot
 bot.run(DISCORD_TOKEN, log_handler=handler, log_level=logging.DEBUG)
