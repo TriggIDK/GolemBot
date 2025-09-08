@@ -82,7 +82,7 @@ async def on_message(message):
 async def custom_help(ctx):
     """Show this message."""
     embed = discord.Embed(
-        title="⚔️ SlayBot Help",
+        title="LoraBot Help",
         description="Here are all the available commands:\n\n",
         color=discord.Color.gold()
     )
