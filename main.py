@@ -33,7 +33,7 @@ async def on_ready():
 
     await bot.change_presence(
         status=Status.dnd,
-        activity=Activity(type=ActivityType.watching, name="Men | type slayhelp")
+        activity=Activity(type=ActivityType.watching, name="Tiktoks of baddies | type slayhelp")
     )
 
 # Event: Member joins
