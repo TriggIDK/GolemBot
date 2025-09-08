@@ -37,8 +37,16 @@ CONFIG_FILE = "special_days.json"
 
 def load_config():
     if os.path.exists(CONFIG_FILE):
-        with open(CONFIG_FILE, "r") as f:
-            return json.load(f)
+        try:
+            with open(CONFIG_FILE, "r") as f:
+                content = f.read().strip()
+                if not content:
+                    # Empty file, return defaults
+                    return {"enabled": True, "channel_id": None, "days": {}}
+                return json.loads(content)
+        except json.JSONDecodeError:
+            print("File error. Resetting to defaults.")
+            return {"enabled": True, "channel_id": None, "days": {}}
     return {"enabled": True, "channel_id": None, "days": {}}
 
 def save_config(config):
@@ -85,7 +93,7 @@ async def on_ready():
         status=Status.dnd,
         activity=Activity(type=ActivityType.watching, name="Tiktoks of baddies | type slayhelp")
     )
-    
+
     if not daily_check.is_running():
         daily_check.start()
 
