@@ -4,10 +4,13 @@ from discord.ext import commands
 import logging
 from dotenv import load_dotenv
 import os
+import random
+import requests
 
 # Load token
 load_dotenv()
-token = os.getenv('DISCORD_TOKEN')
+DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
+TENOR_API_KEY = os.getenv('TENOR_API_KEY')
 
 # Logging
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
@@ -91,6 +94,23 @@ async def brb(ctx):
     await ctx.reply("You shouldn't have done that.")
 
 @bot.command()
+async def gif(ctx, *, search: str = "kitten"):
+    """Send a random GIF from Tenor based on user keyword (default = kitten)."""
+    url = f"https://tenor.googleapis.com/v2/search?q={search}&key={TENOR_API_KEY}&limit=20"
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        data = response.json()
+        if "results" in data and len(data["results"]) > 0:
+            gif = random.choice(data["results"])
+            gif_url = gif["media_formats"]["gif"]["url"]
+            await ctx.send(gif_url)
+        else:
+            await ctx.send(f"I am blind and couldn't find any gifs for: **{search}**.")
+    else:
+        await ctx.send("Sorry I am slow, There was an error in fetchin gifs")
+
+@bot.command()
 async def poll(ctx, *, question):
     embed = discord.Embed(title="New Poll", description=question)
     poll_message = await ctx.send(embed=embed)
@@ -98,9 +118,9 @@ async def poll(ctx, *, question):
     await poll_message.add_reaction("👎")
 
 @bot.command()
-async def sneaky(ctx):
+async def meghan(ctx):
     gif_url = "https://tenor.com/view/sneaky-golem-clash-royale-gif-18197200758540436087"
     await ctx.send(gif_url)
 
 # Run bot
-bot.run(token, log_handler=handler, log_level=logging.DEBUG)
+bot.run(DISCORD_TOKEN, log_handler=handler, log_level=logging.DEBUG)
