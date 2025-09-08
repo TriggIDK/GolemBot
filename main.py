@@ -1,11 +1,13 @@
 import discord
 from discord import Status, Activity, ActivityType
-from discord.ext import commands
+from discord.ext import commands, tasks
+from datetime import datetime, timedelta
 import logging
 from dotenv import load_dotenv
 import os
 import random
 import requests
+import json
 
 # Load token
 load_dotenv()
@@ -30,6 +32,49 @@ bot = commands.Bot(command_prefix="slay", intents=intents, help_command=None)
 # Stores ignored channels + welcome channels
 ignored_channels = set()
 welcome_channels = {}
+
+CONFIG_FILE = "special_days.json"
+
+def load_config():
+    if os.path.exists(CONFIG_FILE):
+        with open(CONFIG_FILE, "r") as f:
+            return json.load(f)
+    return {"enabled": True, "channel_id": None, "days": {}}
+
+def save_config(config):
+    with open(CONFIG_FILE, "w") as f:
+        json.dump(config, f, indent=2)
+
+config = load_config()
+
+# Daily task
+@tasks.loop(hours=24)
+async def daily_check():
+    if not config.get("enabled"):
+        return
+
+    channel_id = config.get("channel_id")
+    if channel_id is None:
+        return
+
+    channel = bot.get_channel(channel_id)
+    if channel is None:
+        return
+
+    today = datetime.now().strftime("%m-%d")
+    if today in config["days"]:
+        message = config["days"][today]
+        await channel.send(f"🎉 Today is: **{message}**")
+
+@daily_check.before_loop
+async def before_daily_check():
+    await bot.wait_until_ready()
+    # Sync to run at midnight
+    now = datetime.now()
+    target = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    if now > target:
+        target += timedelta(days=1)
+    await discord.utils.sleep_until(target)
 
 # Event: Bot ready
 @bot.event
@@ -160,5 +205,52 @@ async def dev(ctx):
     print("TENOR API KEY LOADED:", bool(TENOR_API_KEY))
     print("DISCORD TOKEN LOADED:", bool(DISCORD_TOKEN))
 
-# Run bots
+@bot.command()
+async def setdaychannel(ctx, channel: discord.TextChannel):
+    """Set the channel where daily special day messages are sent."""
+    config["channel_id"] = channel.id
+    save_config(config)
+    await ctx.send(f"Daily special day messages will be sent to {channel.mention}")
+
+@bot.command()
+async def addday(ctx, date: str, *, description: str):
+    """Add a special day (format: MM-DD)"""
+    try:
+        datetime.strptime(date, "%m-%d")
+    except ValueError:
+        await ctx.send("Date format must be MM-DD (e.g., 09-08).")
+        return
+
+    config["days"][date] = description
+    save_config(config)
+    await ctx.send(f"Added special day: {date} → {description}")
+
+@bot.command()
+async def removeday(ctx, date: str):
+    """Remove a special day"""
+    if date in config["days"]:
+        removed = config["days"].pop(date)
+        save_config(config)
+        await ctx.send(f"Removed {date} → {removed}")
+    else:
+        await ctx.send("Today is just a normal day bro.")
+
+@bot.command()
+async def days(ctx, toggle: str):
+    """Enable or disable the daily notifications"""
+    if toggle.lower() in ["on", "enable", "enabled"]:
+        config["enabled"] = True
+        save_config(config)
+        await ctx.send("Daily notifications **enabled**")
+    elif toggle.lower() in ["off", "disable", "disabled"]:
+        config["enabled"] = False
+        save_config(config)
+        await ctx.send("Daily notifications **disabled**")
+    else:
+        await ctx.send("Please use `slaydays on` or `slaydays off`")
+
+# Start the daily check loop
+daily_check.start()
+
+# Run bot
 bot.run(DISCORD_TOKEN, log_handler=handler, log_level=logging.DEBUG)
