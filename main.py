@@ -122,7 +122,7 @@ async def gif(ctx, *, search: str = "kitten"):
         else:
             await ctx.send(f"I am blind and couldn't find any gifs for: **{search}**.")
     else:
-        await ctx.send(f"Sorry I am slow. HTTP {response.status_code}: {response.text}")
+        await ctx.send(f"Sorry I am slow.")
 
 @bot.command()
 async def poll(ctx, *, question):
@@ -136,11 +136,11 @@ async def meghan(ctx):
     gif_url = "https://tenor.com/view/sneaky-golem-clash-royale-gif-18197200758540436087"
     await ctx.send(gif_url)
 
-# Print to console for your own debugging
 @bot.command()
 async def dev(ctx):
+    # Print to console for your own debugging
     print("TENOR API KEY LOADED:", bool(TENOR_API_KEY))
-    print("DISCORD API KEY LOADED:", bool(DISCORD_TOKEN))
+    print("DISCORD TOKEN LOADED:", bool(DISCORD_TOKEN))
 
-# Run bot
+# Run bots
 bot.run(DISCORD_TOKEN, log_handler=handler, log_level=logging.DEBUG)
